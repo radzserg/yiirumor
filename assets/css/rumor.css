@@ -1,0 +1,32 @@
+.hide {display: none !important;}
+.clear {clear: both;}
+
+.item_text {
+    float: left;
+}
+
+.remove_item {
+    float: right;
+}
+
+/* comment page */
+#comment_block textarea {
+    width: 95%;
+}
+
+#comment_block i {
+    cursor: pointer;
+}
+
+#auth_block {
+    float: right;
+    clear: right;
+}
+
+.comment {
+    margin-bottom: 10px;
+}
+
+.remove_comment {
+    float: right;
+}
