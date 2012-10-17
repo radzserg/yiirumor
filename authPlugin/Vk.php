@@ -16,7 +16,7 @@ class Vk extends AbstractClass
         $data = array(
             'client_id' => \Yii::app()->params['vk']['app_id'],
             'scope' => '',
-            'redirect_uri' => \Yii::app()->createAbsoluteUrl('rumor/auth/vkgetcode'),
+            'redirect_uri' => \Yii::app()->createAbsoluteUrl('auth/vkgetcode'),
             'response_type' => 'code'
         );
 
@@ -29,7 +29,7 @@ class Vk extends AbstractClass
             'client_id' => \Yii::app()->params['vk']['app_id'],
             'client_secret' => \Yii::app()->params['vk']['app_shared_secret'],
             'code' => $code,
-            'redirect_uri' => \Yii::app()->createAbsoluteUrl('rumor/auth/vkgetcode'),
+            'redirect_uri' => \Yii::app()->createAbsoluteUrl('auth/vkgetcode'),
         );
 
         $url = self::BASE_URL . 'access_token?' . http_build_query($data);
@@ -43,7 +43,7 @@ class Vk extends AbstractClass
         /**
          * {"access_token":"d003e09e8092d312d012c4ef17d0224c5bdd012d012c4ef806c02918b9e3ad12f0f0b4a","expires_in":86399,"user_id":1123441}
          * print_r($result);
-         * then see 
+         * then see
          */
 
     }

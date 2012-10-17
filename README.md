@@ -1,4 +1,4 @@
-yiirumor
+yiitrumor
 ========
 
 yii comment widget

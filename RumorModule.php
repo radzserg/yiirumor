@@ -1,6 +1,6 @@
 <?php
 
-class RumorModule extends CWebModule
+class TrumorModule extends CWebModule
 {
 
     public function init()
@@ -26,19 +26,19 @@ class RumorModule extends CWebModule
         $cs = Yii::app()->clientScript;
 
         $cs->addPackage('bootstrap', array(
-            'basePath' => 'rumor.assets.bootstrap',
+            'basePath' => 'trumor.assets.bootstrap',
             'js' => array('/js/bootstrap.min.js'),
             'css' => array('/css/bootstrap.min.css'),
             'depends' => array('jquery'),
         ));
 
         $cs->addPackage('underscore', array(
-            'basePath' => 'rumor.assets.js.lib',
+            'basePath' => 'trumor.assets.js.lib',
             'js' => array('underscore.js'),
             'depends' => array('jquery')
         ));
         $cs->addPackage('backbone', array(
-            'basePath' => 'rumor.assets.js.lib',
+            'basePath' => 'trumor.assets.js.lib',
             'js' => array('backbone.js'),
             'depends' => array('underscore')
         ));
@@ -49,8 +49,8 @@ class RumorModule extends CWebModule
 
         $assetManager = Yii::app()->getComponent('assetManager');
         /* @var $assetManager \CAssetManager */
-        $assetPath = $assetManager->publish(Yii::getPathOfAlias('rumor.assets.media'), true, -1, YII_DEBUG);
-        $cs->registerCssFile($assetPath . '/rumor.css');
+        $assetPath = $assetManager->publish(Yii::getPathOfAlias('trumor.assets.media'), true, -1, YII_DEBUG);
+        $cs->registerCssFile($assetPath . '/trumor.css');
     }
 
 }

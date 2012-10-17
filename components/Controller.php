@@ -5,7 +5,7 @@ namespace Rm\components;
 class Controller extends \CController
 {
 
-    public $layout = 'rumor';
+    public $layout = 'trumor';
 
     protected function _returnJson($data)
     {
