@@ -18,15 +18,21 @@
     cursor: pointer;
 }
 
-#auth_block {
-    float: right;
-    clear: right;
-}
-
 .comment {
     margin-bottom: 10px;
 }
 
 .remove_comment {
     float: right;
+}
+
+/* auth providers icons */
+#auth_block {
+    margin-bottom: 8px;
+}
+
+#vk_provider {
+    background-image: url("images/vk-icon.png");
+    width: 16px;
+    height: 16px;
 }

@@ -43,17 +43,14 @@ class RumorModule extends CWebModule
             'depends' => array('underscore')
         ));
 
-
-        $cs->addPackage('rumor', array(
-            'basePath' => 'rumor.assets',
-            'css' => array('/css/rumor.css'),
-            'js' => array(),
-            'depends' => array('underscore')
-        ));
-
         $cs->registerPackage('bootstrap');
         $cs->registerPackage('backbone');
-        $cs->registerPackage('rumor');
+
+
+        $assetManager = Yii::app()->getComponent('assetManager');
+        /* @var $assetManager \CAssetManager */
+        $assetPath = $assetManager->publish(Yii::getPathOfAlias('rumor.assets.media'), true, -1, YII_DEBUG);
+        $cs->registerCssFile($assetPath . '/rumor.css');
     }
 
 }

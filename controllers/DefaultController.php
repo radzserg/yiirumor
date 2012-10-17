@@ -1,9 +1,7 @@
 <?php
 
-class DefaultController extends Controller
+class DefaultController extends Rm\components\Controller
 {
-
-    public $layout = 'rumor';
 
 	public function actionIndex()
 	{
@@ -41,11 +39,4 @@ class DefaultController extends Controller
         }
     }
 
-    /**
-     * Show auth block
-     */
-    public function actionAuth()
-    {
-        $this->render('auth');
-    }
 }
