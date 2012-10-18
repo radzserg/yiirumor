@@ -21,7 +21,6 @@ class GetCode extends \CAction
 
         $code = \Yii::app()->getRequest()->getParam('code');
 
-        $vkAuthPlugin = new \Rm\authPlugin\Vk();
-        $token = $vkAuthPlugin->getToken($code);
+        \Rm\authPlugin\Vk::authorize($code);
     }
 }

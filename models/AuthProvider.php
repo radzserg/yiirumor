@@ -105,4 +105,20 @@ class AuthProvider extends \CActiveRecord
 			'criteria'=>$criteria,
 		));
 	}
+
+    /**
+     * Return auth provider code by id
+     *
+     * @param type $code
+     * @return type
+     * @throws \CException
+     */
+    public static function getIdByCode($code)
+    {
+        $row = AuthProvider::model()->find('code = :code', array(':code' => $code));
+        if (!$row) {
+            throw new \CException("Undefined auth provider code {$code}");
+        }
+        return $row->id;
+    }
 }

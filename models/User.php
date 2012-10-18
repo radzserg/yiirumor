@@ -45,10 +45,12 @@ class User extends \CActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('auth_provider_id, username, create_time', 'required'),
+			array('auth_provider_id, username', 'required'),
 			array('auth_provider_id, trash', 'numerical', 'integerOnly'=>true),
 			array('username', 'length', 'max'=>255),
 			array('info', 'safe'),
+
+             array('create_time', 'default', 'value' => new \CDbExpression('NOW()'), 'setOnEmpty'=>false,'on'=>'insert'),
 			// The following rule is used by search().
 			// Please remove those attributes that should not be searched.
 			array('id, auth_provider_id, username, info, create_time, trash', 'safe', 'on'=>'search'),

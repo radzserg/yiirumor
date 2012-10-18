@@ -6,6 +6,11 @@ class Vk extends AbstractClass
 {
 
     const BASE_URL = "https://oauth.vk.com/";
+    const API_URL = 'https://api.vk.com/';
+
+    static private $_accessToken;
+    static private $_accessTokenExpires;
+
 
     /**
      * Return url to authorize user
@@ -16,29 +21,47 @@ class Vk extends AbstractClass
         $data = array(
             'client_id' => \Yii::app()->params['vk']['app_id'],
             'scope' => '',
-            'redirect_uri' => \Yii::app()->createAbsoluteUrl('auth/vkgetcode'),
+            'redirect_uri' => \Yii::app()->createAbsoluteUrl('/trumor/auth/vkgetcode'),
             'response_type' => 'code'
         );
 
         return self::BASE_URL . 'authorize?' . http_build_query($data);
     }
 
-    static public function getToken($code)
+    /**
+     * Rename to authorize
+     */
+    static public function authorize($code)
     {
-        $data = array(
+        $url = self::BASE_URL . "access_token?" . http_build_query(array(
             'client_id' => \Yii::app()->params['vk']['app_id'],
             'client_secret' => \Yii::app()->params['vk']['app_shared_secret'],
             'code' => $code,
-            'redirect_uri' => \Yii::app()->createAbsoluteUrl('auth/vkgetcode'),
-        );
-
-        $url = self::BASE_URL . 'access_token?' . http_build_query($data);
+            'redirect_uri' => \Yii::app()->createAbsoluteUrl('/trumor/auth/vkgetcode'),
+        ));
 
         $ch = curl_init($url);
         curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
         curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
         $result = curl_exec($ch);
+        $data = \CJSON::decode($result);
+
+        if (!empty($data['error'])) {
+            throw new \CException("Can't get vk access token " . $data['error']
+                . ' ' . $data['error_description']
+            );
+        }
+
+        self::$_accessToken = $data['access_token'];
+        self::$_accessTokenExpires = time() + $data['expires_in'];
+
+        \Rm\models\AuthProviderVk::authorizeUser($data);
+
+//        $vkUser = \Rm\models\AuthProviderVk::model()->find('vk_id = :vkId', array(':vkId' => $data['user_id']));
+//        if (!$vkUser) {
+//
+//        }
 
         /**
          * {"access_token":"d003e09e8092d312d012c4ef17d0224c5bdd012d012c4ef806c02918b9e3ad12f0f0b4a","expires_in":86399,"user_id":1123441}
@@ -48,6 +71,42 @@ class Vk extends AbstractClass
 
     }
 
+    public function getUserDetails($vkId, $fields = null)
+    {
+        $uids = array($vkId);
+        if (!$fields) {
+            $fields = array(
+                 'uid', 'first_name', 'last_name', 'nickname', 'screen_name',
+                'sex', 'bdate', 'city', 'country', 'timezone', 'photo',
+                'photo_medium', 'photo_big', 'has_mobile', 'rate', 'contacts',
+                'education', 'online', 'counters'
+            );
+        }
+        $data = self::_apiCall('users.get', array(
+            'uids' => implode(',', $uids),
+            'fields' => $fields
+        ));
+
+        return isset($data['response'][0]) ? ($data['response'][0]) : array();
+    }
+
+
+    static private function _apiCall($methodName, $data)
+    {
+        if (!self::$_accessToken || self::$_accessTokenExpires < time()) {
+            throw new \CException("VK access token is missing or expired");
+        }
+        $data['access_token'] = self::$_accessToken;
+
+        $url = self::API_URL . "method/{$methodName}?" . http_build_query($data);
+
+        $ch = curl_init($url);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+        $result = curl_exec($ch);
+        return \CJSON::decode($result);
+    }
 
     /**
      * Authorize user
