@@ -21,6 +21,15 @@ class GetCode extends \CAction
 
         $code = \Yii::app()->getRequest()->getParam('code');
 
-        \Rm\authPlugin\Vk::authorize($code);
+        $error = false;
+        try {
+            \Rm\authPlugin\Vk\Plugin::authorizeByCode($code);
+        } catch (\CException $e) {
+            $error = true;
+        }
+
+        $this->getController()->render('trumor.authPlugin.Vk.views.getCode', array(
+            'error' => $error
+        ));
     }
 }

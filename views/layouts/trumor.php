@@ -7,11 +7,6 @@
     </head>
     <body>
         <div style="width:500px;margin:auto;">
-            <div class="row-fluid">
-                <div class="span2 offset10" id="auth_block">
-
-                </div>
-            </div>
             <?= $content ?>
         </div>
     </body>

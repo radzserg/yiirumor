@@ -13,13 +13,8 @@ class AuthController extends Rm\components\Controller
 
     public function actionApplyAuth()
     {
-        $authProviderCode = $this->_getRequiredParam('authProviderCode');
-        $authData = $this->_getRequiredParam('authData');
-
-        $authPlugin = Rm\authPlugin\Factory::factory($authProviderCode);
-        $authPlugin->authorize($authData);
-
-        return $this->_returnJson(array());
+        $user = Rm\components\AuthUser::getAuthorizedUser();
+        return $this->_returnJson($user->getDetails());
     }
 
 }

@@ -31,8 +31,16 @@
     margin-bottom: 8px;
 }
 
+#authorized_user {
+    display: none;
+}
+
 #vk_provider {
     background-image: url("images/vk-icon.png");
     width: 16px;
     height: 16px;
+}
+
+#no_authorize {
+    display: none;
 }

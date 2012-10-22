@@ -13,7 +13,7 @@ class Factory
      */
     static public function factory($authProviderCode)
     {
-        $className = "Rm\\authPlugin\\" . \Rm\components\Tools::underscoreToCamel($authProviderCode);
+        $className = "Rm\\authPlugin\\" . \Rm\components\Tools::underscoreToCamel($authProviderCode) . '\Plugin';
         if (!class_exists($className)) {
             throw new \CException("Can't find auth plugin {$authProviderCode}");
         }

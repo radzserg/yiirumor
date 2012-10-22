@@ -20,6 +20,10 @@ class DefaultController extends Rm\components\Controller
      */
     public function actionComment()
     {
+        $authorizedUser = Rm\components\AuthUser::getAuthorizedUser();
+        if ($authorizedUser) {
+            throw new CException("You have to be authorized");
+        }
         if (Yii::app()->getRequest()->isAjaxRequest) {
             $requestType = Yii::app()->request->getRequestType();
 
@@ -29,7 +33,7 @@ class DefaultController extends Rm\components\Controller
                 $data = CJSON::decode(file_get_contents('php://input'));
                 $comment = new Rm\models\Comment();
                 $comment->setAttributes($data);
-                $comment->user_id = 1;
+                $comment->user_id = $authorizedUser->id;
                 $comment->save();
                 $this->_returnJson($comment->getAttributes());
             } elseif ($requestType == "DELETE") {
