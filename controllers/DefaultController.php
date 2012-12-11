@@ -5,14 +5,38 @@ class DefaultController extends Rm\components\Controller
 
 	public function actionIndex()
 	{
-		$this->render('index');
+        $authPluginsConfig = require_once Yii::getPathOfAlias('trumor.config')
+            . '/authPlugins.php';
+
+        $authPlugins = array();
+        foreach (array_keys($authPluginsConfig) as $code) {
+            $authPlugins[$code] = \Rm\authPlugin\Factory::factory($code);
+        }
+
+		$this->render('index', array(
+		    'user' => Rm\components\AuthUser::getAuthorizedUser(),
+            'authPlugins' => $authPlugins,
+        ));
 	}
 
     public function actionComments()
     {
-        $comments = Rm\models\Comment::model()->findAll();
+        $comments = Rm\models\Comment::model()
+            ->published()
+            ->with('user')
+            ->findAll();
 
-        $this->_returnJson($comments);
+        $result = array();
+        foreach ($comments as $comment) {
+            /* @var $comment Rm\models\Comment */
+            $result[] = array(
+                'comment' => $comment->comment,
+                'author_name' => $comment->user->username,
+                'author_photo' => $comment->user->photo,
+            );
+        }
+
+        $this->_returnJson($result);
     }
 
     /**
@@ -21,7 +45,7 @@ class DefaultController extends Rm\components\Controller
     public function actionComment()
     {
         $authorizedUser = Rm\components\AuthUser::getAuthorizedUser();
-        if ($authorizedUser) {
+        if (!$authorizedUser) {
             throw new CException("You have to be authorized");
         }
         if (Yii::app()->getRequest()->isAjaxRequest) {

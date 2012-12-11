@@ -26,6 +26,10 @@
     float: right;
 }
 
+.author_image {
+    float: left;
+}
+
 /* auth providers icons */
 #auth_block {
     margin-bottom: 8px;
@@ -37,6 +41,12 @@
 
 #vk_provider {
     background-image: url("images/vk-icon.png");
+    width: 16px;
+    height: 16px;
+}
+
+#fb_provider {
+    background-image: url("images/fb-icon.png");
     width: 16px;
     height: 16px;
 }

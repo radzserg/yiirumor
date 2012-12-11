@@ -5,10 +5,16 @@ class AuthController extends Rm\components\Controller
 
     public function actions()
     {
-        // load from some config
-        return array(
-            'vkgetcode'=>'Rm\authPlugin\Vk\actions\GetCode',
-        );
+        $authPlugins = require_once Yii::getPathOfAlias('trumor.config') . '/authPlugins.php';
+        $actions = array();
+        foreach ($authPlugins as $plugin) {
+            if (!isset($plugin['actions'])) {
+                continue;
+            }
+            $actions += $plugin['actions'];
+        }
+
+        return $actions;
     }
 
     public function actionApplyAuth()

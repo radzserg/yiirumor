@@ -25,6 +25,7 @@ class GetCode extends \CAction
         try {
             \Rm\authPlugin\Vk\Plugin::authorizeByCode($code);
         } catch (\CException $e) {
+            \Yii::log($e->getMessage, \CLogger::LEVEL_ERROR);
             $error = true;
         }
 

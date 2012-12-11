@@ -51,14 +51,22 @@ class Comment extends \CActiveRecord
 		);
 	}
 
+    public function scopes()
+    {
+        return array(
+            'published'=>array(
+                //'condition'=>'status=1',
+            ),
+		);
+    }
+
 	/**
 	 * @return array relational rules.
 	 */
 	public function relations()
 	{
-		// NOTE: you may need to adjust the relation name and the related
-		// class name for the relations automatically generated below.
 		return array(
+            'user' => array(self::BELONGS_TO, '\Rm\models\User', 'user_id'),
 		);
 	}
 

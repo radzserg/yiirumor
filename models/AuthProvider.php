@@ -18,7 +18,6 @@ namespace Rm\models;
  */
 class AuthProvider extends \CActiveRecord
 {
-    const VK = 'vk';
 
 	/**
 	 * Returns the static model of the specified AR class.

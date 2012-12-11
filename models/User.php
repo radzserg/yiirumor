@@ -45,10 +45,10 @@ class User extends \CActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('auth_provider_id, username', 'required'),
+			array('auth_provider_id, username, foreign_id', 'required'),
 			array('auth_provider_id, trash', 'numerical', 'integerOnly'=>true),
 			array('username', 'length', 'max'=>255),
-			array('info', 'safe'),
+			array('photo', 'safe'),
 
              array('create_time', 'default', 'value' => new \CDbExpression('NOW()'), 'setOnEmpty'=>false,'on'=>'insert'),
 			// The following rule is used by search().
@@ -62,10 +62,8 @@ class User extends \CActiveRecord
 	 */
 	public function relations()
 	{
-		// NOTE: you may need to adjust the relation name and the related
-		// class name for the relations automatically generated below.
 		return array(
-			'rmComments' => array(self::HAS_MANY, 'RmComment', 'user_id'),
+			'comments' => array(self::HAS_MANY, 'RmComment', 'user_id'),
 			'authProvider' => array(self::BELONGS_TO, 'RmAuthProvider', 'auth_provider_id'),
 		);
 	}
@@ -107,4 +105,36 @@ class User extends \CActiveRecord
 			'criteria'=>$criteria,
 		));
 	}
+
+
+    public function authorizeUser($vkAuthData, \Rm\authPlugin\AbstractClass $authProvider)
+    {
+        $user = \Rm\models\User::model()
+            ->find('foreign_id = :vkId AND auth_provider_id = :authProviderId',
+                    array(':vkId' => $vkAuthData['user_id'], ':authProviderId' => static::getAuthProviderId())
+            );
+        if (!$user) {
+            // need to get base user info
+            $details = $authProvider->getUserDetails($vkAuthData['user_id']);
+
+            $user = new \Rm\models\User();
+            $user->setAttributes(array(
+                'foreign_id' => $details['user_id'],
+                'auth_provider_id' => $authProvider->getAuthProviderId(),
+                'username' => "{$details['username']}",
+                'photo' => $details['photo'],
+            ));
+            $user->save();
+
+            $commonDetails = self::filterDetails($details);
+            \Rm\components\AuthUser::authorize($user->id, $commonDetails);
+        } else {
+            $user->token_expires = time() + $vkAuthData['expires_in'];
+            $user->save();
+
+            $commonDetails = self::filterDetails(unserialize($user->user_data));
+            \Rm\components\AuthUser::authorize($user->user->id, $commonDetails);
+        }
+    }
+
 }

@@ -3,9 +3,12 @@
 
     <h4>Comment</h4>
     <div id="auth_block">
-        <a href="javascript:void(0)" class="<?= Rm\models\AuthProvider::VK ?>">
-            <img id="vk_provider" />
-        </a>
+        <? foreach ($authPlugins as $code => $plugin) : ?>
+            <? $plugin->setJsHandler() ?>
+            <a href="javascript:void(0)" class="<?= $code ?>">
+                <img id="<?= $code ?>_provider" />
+            </a>
+        <? endforeach; ?>
     </div>
 
     <div id="authorized_user">
@@ -30,12 +33,17 @@
 
 
 <script type="text/template" id="comment_row">
+
     <div class="remove_comment">
         <i class="icon-remove" id="remove_comment"></i>
+    </div>
+    <div class="author_image">
+        <img src="<%= author_photo %>" alt="<%= author_name %>" />
     </div>
     <div class="comment">
         <%= comment %>
     </div>
+    <div class="clear"></div>
 </script>
 
 <script>
@@ -60,13 +68,16 @@
             }
         })
 
+        // comments collection
         var comments = new (Backbone.Collection.extend({
             model: app.Models.Comment,
             url: "<?= $this->createUrl('comments') ?>"
         }))
 
+        // single comment block
         app.Views.CommentRow = Backbone.View.extend({
             tagName: "div",
+            className: "comment_row",
 
             events: {
                 "click #remove_comment": "removeComment"
@@ -86,7 +97,7 @@
         })
 
         commentBlock = new (Backbone.View.extend({
-            userId: null,
+            userId: '<?= $user ? $user->id : null ?>',
 
             el: $("#comment_block"),
 
@@ -142,10 +153,7 @@
         }))
 
         // @todo move it authPlugin/*
-        $('#auth_block .vk').click(function() {
-            var authUrl = "<?= Rm\authPlugin\Vk\Plugin::getAuthUrl() ?>"
-            window.open(authUrl, 'Authorize via VK', 'width=500,height=200,toolbar=0,menubar=0,location=0,resizable=0,scrollbars=0,left=300,top=200')
-        })
+
 
 
 
